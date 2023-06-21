@@ -112,8 +112,6 @@ import structures$VotePage from './components/structures/VotePage';
 structures$VotePage && (components['structures.VotePage'] = structures$VotePage);
 import structures$WalletContainer from './components/structures/WalletContainer';
 structures$WalletContainer && (components['structures.WalletContainer'] = structures$WalletContainer);
-import structures$auth$AptosWallet from './components/structures/auth/AptosWallet';
-structures$auth$AptosWallet && (components['structures.auth.AptosWallet'] = structures$auth$AptosWallet);
 import structures$auth$CompleteSecurity from './components/structures/auth/CompleteSecurity';
 structures$auth$CompleteSecurity && (components['structures.auth.CompleteSecurity'] = structures$auth$CompleteSecurity);
 import structures$auth$E2eSetup from './components/structures/auth/E2eSetup';
@@ -464,6 +462,8 @@ import views$dialogs$AddExistingToSpaceDialog from './components/views/dialogs/A
 views$dialogs$AddExistingToSpaceDialog && (components['views.dialogs.AddExistingToSpaceDialog'] = views$dialogs$AddExistingToSpaceDialog);
 import views$dialogs$AllTreasuryAccountDialog from './components/views/dialogs/AllTreasuryAccountDialog';
 views$dialogs$AllTreasuryAccountDialog && (components['views.dialogs.AllTreasuryAccountDialog'] = views$dialogs$AllTreasuryAccountDialog);
+import views$dialogs$AptosWalletsDialog from './components/views/dialogs/AptosWalletsDialog';
+views$dialogs$AptosWalletsDialog && (components['views.dialogs.AptosWalletsDialog'] = views$dialogs$AptosWalletsDialog);
 import views$dialogs$AskInviteAnywayDialog from './components/views/dialogs/AskInviteAnywayDialog';
 views$dialogs$AskInviteAnywayDialog && (components['views.dialogs.AskInviteAnywayDialog'] = views$dialogs$AskInviteAnywayDialog);
 import views$dialogs$BarrierCheckDialog from './components/views/dialogs/BarrierCheckDialog';

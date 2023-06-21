@@ -57,6 +57,7 @@
   },
   "dependencies": {
     "@aptos-labs/wallet-adapter-ant-design": "1.0.0",
+    "@aptos-labs/wallet-adapter-mui-design": "^1.0.0",
     "@aptos-labs/wallet-adapter-react": "1.0.2",
     "@babel/runtime": "^7.12.5",
     "@blockworks-foundation/mango-client": "^3.4.5",
