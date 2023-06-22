@@ -25,7 +25,6 @@ import { FewchaWallet } from "fewcha-plugin-wallet-adapter";
 import { NightlyWallet } from "@nightlylabs/aptos-wallet-adapter-plugin";
 import { RiseWallet } from "@rise-wallet/wallet-adapter";
 import { TrustWallet } from "@trustwallet/aptos-wallet-adapter";
-import { WalletConnector } from "@aptos-labs/wallet-adapter-mui-design";
 
 import { WalletSelector } from "@aptos-labs/wallet-adapter-ant-design";
 
@@ -57,7 +56,6 @@ const ConnectButton = props => {
         const accessToken = MatrixClientPeg.get().getAccessToken();
         console.log("accessToken: ", accessToken);
         console.log("Aptos Wallet connected = ", aptosWallet.connected);
-        console.log("APTOS______________");
         if(!accessToken) return; // user didn't signin
         const connectedWallet = window.localStorage.getItem("conneted_wallet");
         console.log({connectedWallet});
@@ -260,7 +258,10 @@ const ConnectButton = props => {
                 show={props.aptosWalletsModalShow || aptosWalletsModalShow} 
                 handleAptosWalletsModal={props.handleAptosWalletsModal || handleAptosWalletsModal}
             />
-            <WalletConnector />
+            <AptosWalletAdapterProvider plugins={[new PetraWallet(), new FewchaWallet(), new NightlyWallet(), 
+                new RiseWallet(), new TrustWallet(),]}>
+                <WalletSelector hidden={true}/>
+            </AptosWalletAdapterProvider>
         </>
     )
 }

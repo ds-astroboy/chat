@@ -56,8 +56,11 @@ const ConnectButton = props => {
         console.log("userData: ", userData);
         const accessToken = MatrixClientPeg.get().getAccessToken();
         console.log("accessToken: ", accessToken);
-        console.log("Aptos Wallet connected = ", aptosWallet.connected);
+        console.log("Aptos Wallet connected = ", aptosWallet?.connected);
         console.log("APTOS______________");
+        console.log(aptosWallet?.account);
+        console.log(aptosWallet?.connected);
+        console.log(aptosWallet.connected);
         if(!accessToken) return; // user didn't signin
         const connectedWallet = window.localStorage.getItem("conneted_wallet");
         console.log({connectedWallet});
@@ -77,7 +80,7 @@ const ConnectButton = props => {
                 signInViaEthWallet();
             };
         }
-    }, [solanaWallet.connected, ethWallet.active, aptosWallet.connected]);
+    }, [solanaWallet.connected, ethWallet.active, aptosWallet.account?.address]);
 
     const connectWallet = async(accountData, protocol, address) => {
         let web3UserData = {
@@ -260,7 +263,10 @@ const ConnectButton = props => {
                 show={props.aptosWalletsModalShow || aptosWalletsModalShow} 
                 handleAptosWalletsModal={props.handleAptosWalletsModal || handleAptosWalletsModal}
             />
-            <WalletConnector />
+            <AptosWalletAdapterProvider plugins={[new PetraWallet(), new FewchaWallet(), new NightlyWallet(), 
+                new RiseWallet(), new TrustWallet(),]}>
+                <WalletSelector />
+            </AptosWalletAdapterProvider>
         </>
     )
 }

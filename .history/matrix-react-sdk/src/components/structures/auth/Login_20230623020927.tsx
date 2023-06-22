@@ -41,6 +41,7 @@ import WalletSignupButtonGroup from './WalletSignUpButtonGroup';
 import { signInWeb2Email } from '../../../apis';
 
 import { AptosWalletAdapterProvider, useWallet } from "@aptos-labs/wallet-adapter-react";
+import { WalletConnector } from "@aptos-labs/wallet-adapter-mui-design";
 import { PetraWallet } from "petra-plugin-wallet-adapter";
 import { FewchaWallet } from "fewcha-plugin-wallet-adapter";
 import { NightlyWallet } from "@nightlylabs/aptos-wallet-adapter-plugin";

@@ -25,7 +25,7 @@ import { FewchaWallet } from "fewcha-plugin-wallet-adapter";
 import { NightlyWallet } from "@nightlylabs/aptos-wallet-adapter-plugin";
 import { RiseWallet } from "@rise-wallet/wallet-adapter";
 import { TrustWallet } from "@trustwallet/aptos-wallet-adapter";
-import { WalletConnector } from "@aptos-labs/wallet-adapter-mui-design";
+import base58 from "bs58";
 
 import { WalletSelector } from "@aptos-labs/wallet-adapter-ant-design";
 
@@ -56,8 +56,6 @@ const ConnectButton = props => {
         console.log("userData: ", userData);
         const accessToken = MatrixClientPeg.get().getAccessToken();
         console.log("accessToken: ", accessToken);
-        console.log("Aptos Wallet connected = ", aptosWallet.connected);
-        console.log("APTOS______________");
         if(!accessToken) return; // user didn't signin
         const connectedWallet = window.localStorage.getItem("conneted_wallet");
         console.log({connectedWallet});
@@ -67,7 +65,7 @@ const ConnectButton = props => {
             };
         }
         if(aptosWallet.connected && !isSendSignRequestAptos) {
-            if(bs58.encode(aptosWallet.account.publicKey?.toString()) !== connectedWallet) {
+            if(base58.encode(aptosWallet.account.publicKey?.toString()) !== connectedWallet) {
                 signInViaAptosWallet();
             }
         }
@@ -145,30 +143,29 @@ const ConnectButton = props => {
 
     const signInViaAptosWallet = async() => {
         setIsSendSignRequestAptos(true);
-        let address = bs58.encode(aptosWallet.account.publicKey.toString());
+        let address = base58.encode(aptosWallet.account.publicKey.toString());
         if(userDetail?.wallets[2]?.aptos?.toLowerCase() === address.toLowerCase()) { //solana wallet was already connected
-            setIsSendSignRequestAptos(false);
+            setIsSendSignRequestSolana(false);
             return;
         }
         const userId = MatrixClientPeg.get()?.getUserId();
         if(!userId) {
             setIsSendSignRequestEthereum(false);
-            setIsSendSignRequestSolana(false);
             return;
         }
         {
             const userName = getUserNameFromId(userId);
-            const {success, wallets} = await getWalletAddress(userName, "aptos", userData);
-            if(success && wallets && wallets["aptos"]?.toLowerCase() === address.toLowerCase()) {
+            const {success, wallets} = await getWalletAddress(userName, "solana", userData);
+            if(success && wallets && wallets["solana"]?.toLowerCase() === address.toLowerCase()) {
                 setIsSendSignRequestSolana(false);
                 return;
             }
         }
-        const {success, data} = await verifyAptosWallet(address);
+        const {success, data} = await verifySolanaWallet(address);
         if(!success) {
-            setIsSendSignRequestAptos(false);
+            setIsSendSignRequestSolana(false);
             alert.error("Wallet verification was failed. Please try again.")
-            aptosWallet.disconnect();
+            solanaWallet.disconnect();
             return;
         }
         
@@ -176,16 +173,16 @@ const ConnectButton = props => {
         await solanaWallet.signMessage(encodedMessage)
         .then(async(hash) => {
             const signature = bs58.encode(hash);
-            const {success: signinResult, data: accountData} = await signInAptosWallet(bs58.encode(aptosWallet.account.publicKey.toString()), signature, data.token);
+            const {success: signinResult, data: accountData} = await signInSolanaWallet(solanaWallet.publicKey.toBase58(), signature, data.token);
             if(!signinResult)  {
-                aptosWallet.disconnect();
+                solanaWallet.disconnect();
                 alert.error("Message Signature was failed. Please try again.")
                 return;
             }
-            connectWallet(accountData, "aptos", address);
+            connectWallet(accountData, "solana", address);
         })
         .finally(() => {
-            setIsSendSignRequestAptos(false);
+            setIsSendSignRequestSolana(false);
         });
     }
 
@@ -260,7 +257,10 @@ const ConnectButton = props => {
                 show={props.aptosWalletsModalShow || aptosWalletsModalShow} 
                 handleAptosWalletsModal={props.handleAptosWalletsModal || handleAptosWalletsModal}
             />
-            <WalletConnector />
+            <AptosWalletAdapterProvider plugins={[new PetraWallet(), new FewchaWallet(), new NightlyWallet(), 
+                new RiseWallet(), new TrustWallet(),]}>
+                <WalletSelector hidden={true}/>
+            </AptosWalletAdapterProvider>
         </>
     )
 }

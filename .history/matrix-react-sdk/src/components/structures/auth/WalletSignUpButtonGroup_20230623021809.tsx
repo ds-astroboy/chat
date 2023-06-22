@@ -15,6 +15,9 @@ import { FewchaWallet } from "fewcha-plugin-wallet-adapter";
 import { NightlyWallet } from "@nightlylabs/aptos-wallet-adapter-plugin";
 import { RiseWallet } from "@rise-wallet/wallet-adapter";
 import { TrustWallet } from "@trustwallet/aptos-wallet-adapter";
+
+import { WalletSelector } from "@aptos-labs/wallet-adapter-ant-design";
+import { set } from "lodash";
 import { base58 } from "ethers/lib/utils";
 
 
@@ -47,7 +50,12 @@ const WalletSignupButtonGroup: FC<IProps> = (props) => {
     // TODO Here is my Code
 
     const solanaWallet = solanaUseWallet();
+    console.log("------------------------");
+    console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~");
     const aptosWallet = useWallet();
+    console.log(typeof connect);
+    console.log("------------------------");
+    console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
     const ethProvider = useMemo(() => { 
         return active ? new ethers.providers.Web3Provider(library.provider) : null;
@@ -58,7 +66,7 @@ const WalletSignupButtonGroup: FC<IProps> = (props) => {
     useEffect(() => {
         console.log("Effect has started!!!!!!!!");
         console.log("Aptos Wallet execute: ", aptosWallet.connected);
-        console.log(typeof(aptosWallet.connect));
+        console.log(typeof(aptosWallet.connect))
         console.log("-----------------------------------")
         if(!isClickedConnectButton[0] && solanaWallet.connected) {
             solanaWallet.disconnect();
@@ -73,7 +81,6 @@ const WalletSignupButtonGroup: FC<IProps> = (props) => {
             setWallet(solanaWallet);
         }
         else if(isClickedConnectButton[2] && aptosWallet.connected){
-            console.log("Aptos Wallet Selected!");
             setWallet(aptosWallet)
         }
         else if(isClickedConnectButton[1] && active) {
@@ -101,7 +108,6 @@ const WalletSignupButtonGroup: FC<IProps> = (props) => {
             signInViaSolanaWallet()
         }
         else if(aptosWallet.connected) {
-            console.log("SignInViaAptosWallet!!!!!");
             signInViaAptosWallet()
         }
         else if(active) {
@@ -114,9 +120,6 @@ const WalletSignupButtonGroup: FC<IProps> = (props) => {
     const signInViaSolanaWallet = async() => {
         setIsSigning(true);
         const {success, data, responseCode} = await verifySolanaWallet(wallet.publicKey.toBase58());
-        console.log("Solana Success = ", success);
-        console.log("Solana data = ", data);
-        console.log("Solana responseCode = ", responseCode);
         if(!success) {
             props.setVerifyResult({responseCode});
             setIsSigning(false);
@@ -126,7 +129,6 @@ const WalletSignupButtonGroup: FC<IProps> = (props) => {
         
         const encodedMessage = new TextEncoder().encode(data.message);
         let signature;
-        console.log("Sign Message = ", await wallet.signMessage(encodedMessage))
         try {
             signature = bs58.encode(await wallet.signMessage(encodedMessage));
         }
@@ -136,10 +138,6 @@ const WalletSignupButtonGroup: FC<IProps> = (props) => {
             wallet.disconnect();
             return;
         }
-        console.log("Hey Hey Here!!!");
-        console.log(wallet.publicKey.toBase58());
-        console.log(signature, typeof signature);
-        console.log(data.token, typeof data.token);
         const {success: signinResult, data: accountData} = await signInSolanaWallet(wallet.publicKey.toBase58(), signature, data.token);
         if(!signinResult)  {
             setIsSigning(false);
@@ -164,15 +162,7 @@ const WalletSignupButtonGroup: FC<IProps> = (props) => {
     // TODO SignInVia Aptos Wallet
     const signInViaAptosWallet = async() => {
         setIsSigning(true);
-        // const success = true;
-        // const data = "";
-        // const responseCode = 200;
-        console.log("Sign In Via Aptos Wallet Started");
-        console.log(wallet.account.publicKey, typeof wallet.account.publicKey);
-        console.log(base58.encode(wallet.account.publicKey));
-        console.log("Public Key = ", base58.encode(wallet.account.publicKey));
-        const {success, data, responseCode} = await verifySolanaWallet(base58.encode(wallet.account.publicKey));
-        console.log("APTOS:: success = ", success, "data = ", data, "response = ", responseCode);
+        const {success, data, responseCode} = await verifyAptosWallet(wallet.publicKey.toBase58());
         if(!success) {
             props.setVerifyResult({responseCode});
             setIsSigning(false);
@@ -181,16 +171,9 @@ const WalletSignupButtonGroup: FC<IProps> = (props) => {
         }
         
         const encodedMessage = new TextEncoder().encode(data.message);
-        console.log(encodedMessage);
-        console.log("EncodedMessageLevel?");
         let signature;
-        console.log(data);
-        console.log("data.message = ", data.message);
         try {
-            // await aptosWallet.signMessage(data);
-            signature = await wallet.signMessage({message: data.message, nonce: "random_string",});
-            signature = signature.signature;
-            console.log("signature = ", signature);
+            signature = bs58.encode(await wallet.signMessage(encodedMessage));
         }
         catch(e) {
             console.error(e);
@@ -198,22 +181,17 @@ const WalletSignupButtonGroup: FC<IProps> = (props) => {
             wallet.disconnect();
             return;
         }
-        // console.log("Signature Level = ", base58.encode(signature.slice(0, 58)));
-        console.log("Public Key = ", base58.encode(wallet.account.publicKey));
-        console.log("data.token = ", data.token);
-        const {success: signinResult, data: accountData} = await signInAptosWallet(base58.encode(wallet.account.publicKey), signature, data.token);
-        console.log("Next Stage: success = ", success, "data = ", data);
+        const {success: signinResult, data: accountData} = await signInAptosWallet(wallet.publicKey.toBase58(), signature, data.token);
         if(!signinResult)  {
             setIsSigning(false);
             wallet.disconnect();
             return;
         }
-        window.localStorage.setItem("conneted_wallet", base58.encode(wallet.account.publicKey));
+        window.localStorage.setItem("conneted_wallet", wallet.publicKey.toBase58());
         let primaryWallet = {
             protocol: BLOCKCHAINNETWORKS.Aptos,
-            address: base58.encode(wallet.account.publicKey)
+            address: wallet.publicKey.toBase58()
         }
-        console.log("Primary Wallet");
         window.localStorage.setItem("primary_wallet", JSON.stringify(primaryWallet));
         let userData = {
             username: accountData.username,
@@ -222,6 +200,10 @@ const WalletSignupButtonGroup: FC<IProps> = (props) => {
         setUserData(userData);
         props.getUserInfo({...accountData, newUser: accountData.newUser});
         setIsSigning(false);
+
+
+        // success = aptosWallet.connected;
+        // var codedString = Base58.encode(new Buffer("Hello world"));
     }
 
     const signInViaEthWallet = async() => {
@@ -279,10 +261,11 @@ const WalletSignupButtonGroup: FC<IProps> = (props) => {
         // setAptosWalletsModalShow(true);
         console.log("Aptos Wallet Button Clicked");
         // document.getElementsByClassName("ant-btn css-dev-only-do-not-override-1wazalj ant-btn-default wallet-button")[0].click();
-        document.getElementsByClassName("MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge wallet-button css-1ekazca-MuiButtonBase-root-MuiButton-root")[0].click();
+        // document.getElementsByClassName("MuiButtonBase-root MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge MuiButton-root MuiButton-contained MuiButton-containedPrimary MuiButton-sizeLarge MuiButton-containedSizeLarge wallet-button css-1ekazca-MuiButtonBase-root-MuiButton-root")[0].click();
         console.log("Hey I am here");
         console.log(aptosWallet.connected);
-        console.log("HAPPYY!!!!!!!!!!");
+        console.log("HAPPYY!!!!!!!!!!")
+        // return <WalletSelector/>;
     }
 
     // TODO Aptos Connect Show

@@ -58,6 +58,9 @@ const ConnectButton = props => {
         console.log("accessToken: ", accessToken);
         console.log("Aptos Wallet connected = ", aptosWallet.connected);
         console.log("APTOS______________");
+        console.log(aptosWallet.account);
+        console.log(aptosWallet.connected);
+        console.log(aptosWallet.connected);
         if(!accessToken) return; // user didn't signin
         const connectedWallet = window.localStorage.getItem("conneted_wallet");
         console.log({connectedWallet});

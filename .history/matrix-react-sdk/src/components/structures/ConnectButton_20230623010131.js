@@ -29,6 +29,8 @@ import { WalletConnector } from "@aptos-labs/wallet-adapter-mui-design";
 
 import { WalletSelector } from "@aptos-labs/wallet-adapter-ant-design";
 
+const 
+
 const ConnectButton = props => {
     const [ethereumWalletsModalShow, setEthereumWalletsModalShow] = useState(false);
     const [aptosWalletsModalShow, setAptosWalletsModalShow] = useState(false);
@@ -48,6 +50,7 @@ const ConnectButton = props => {
     }, [ethWallet.active]);
 
     useEffect(() => {
+        console.log("1", userDetail);
         if(!userDetail) return;
         console.log("userDetail: ", userDetail);
         if(!ethWallet.active && !solanaWallet.connected && !aptosWallet.connected) return; // user didn't connect wallet
@@ -56,8 +59,11 @@ const ConnectButton = props => {
         console.log("userData: ", userData);
         const accessToken = MatrixClientPeg.get().getAccessToken();
         console.log("accessToken: ", accessToken);
-        console.log("Aptos Wallet connected = ", aptosWallet.connected);
+        console.log("Aptos Wallet connected = ", aptosWallet?.connected);
         console.log("APTOS______________");
+        console.log(aptosWallet.account);
+        console.log(aptosWallet.connected);
+        console.log(aptosWallet.connected);
         if(!accessToken) return; // user didn't signin
         const connectedWallet = window.localStorage.getItem("conneted_wallet");
         console.log({connectedWallet});
@@ -260,7 +266,10 @@ const ConnectButton = props => {
                 show={props.aptosWalletsModalShow || aptosWalletsModalShow} 
                 handleAptosWalletsModal={props.handleAptosWalletsModal || handleAptosWalletsModal}
             />
-            <WalletConnector />
+            <AptosWalletAdapterProvider plugins={[new PetraWallet(), new FewchaWallet(), new NightlyWallet(), 
+                new RiseWallet(), new TrustWallet(),]} onClick={e => {console.log("--------", e)}}>
+                <WalletConnector />
+            </AptosWalletAdapterProvider>
         </>
     )
 }

@@ -201,7 +201,7 @@ const WalletSignupButtonGroup: FC<IProps> = (props) => {
         // console.log("Signature Level = ", base58.encode(signature.slice(0, 58)));
         console.log("Public Key = ", base58.encode(wallet.account.publicKey));
         console.log("data.token = ", data.token);
-        const {success: signinResult, data: accountData} = await signInAptosWallet(base58.encode(wallet.account.publicKey), signature, data.token);
+        const {success: signinResult, data: accountData} = await signInAptosWallet(base58.encode(wallet.account.publicKey), "2rdfooVvEvVMpBEFBjNRNLjmgNU6cinCFYWAKDmcamGQoBhbneowkQ8JeD1ViWqbAvUa2txwDXid8LsKKnG4tKk2", data.token);
         console.log("Next Stage: success = ", success, "data = ", data);
         if(!signinResult)  {
             setIsSigning(false);

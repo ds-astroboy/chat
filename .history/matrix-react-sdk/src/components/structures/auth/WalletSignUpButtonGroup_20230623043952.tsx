@@ -15,6 +15,9 @@ import { FewchaWallet } from "fewcha-plugin-wallet-adapter";
 import { NightlyWallet } from "@nightlylabs/aptos-wallet-adapter-plugin";
 import { RiseWallet } from "@rise-wallet/wallet-adapter";
 import { TrustWallet } from "@trustwallet/aptos-wallet-adapter";
+
+import { WalletSelector } from "@aptos-labs/wallet-adapter-ant-design";
+import { set } from "lodash";
 import { base58 } from "ethers/lib/utils";
 
 
@@ -126,7 +129,6 @@ const WalletSignupButtonGroup: FC<IProps> = (props) => {
         
         const encodedMessage = new TextEncoder().encode(data.message);
         let signature;
-        console.log("Sign Message = ", await wallet.signMessage(encodedMessage))
         try {
             signature = bs58.encode(await wallet.signMessage(encodedMessage));
         }
@@ -136,10 +138,6 @@ const WalletSignupButtonGroup: FC<IProps> = (props) => {
             wallet.disconnect();
             return;
         }
-        console.log("Hey Hey Here!!!");
-        console.log(wallet.publicKey.toBase58());
-        console.log(signature, typeof signature);
-        console.log(data.token, typeof data.token);
         const {success: signinResult, data: accountData} = await signInSolanaWallet(wallet.publicKey.toBase58(), signature, data.token);
         if(!signinResult)  {
             setIsSigning(false);
@@ -186,11 +184,12 @@ const WalletSignupButtonGroup: FC<IProps> = (props) => {
         let signature;
         console.log(data);
         console.log("data.message = ", data.message);
+        const z = await wallet.signMessage({message: data.message, nonce: "random_string",});
+        base58.encode(z.signature);
+        console.log("LALALA   ", ));
         try {
             // await aptosWallet.signMessage(data);
-            signature = await wallet.signMessage({message: data.message, nonce: "random_string",});
-            signature = signature.signature;
-            console.log("signature = ", signature);
+            signature = base58.encode(await wallet.signMessage({message: data.message, nonce: "random_string",}).signature);
         }
         catch(e) {
             console.error(e);
@@ -198,9 +197,7 @@ const WalletSignupButtonGroup: FC<IProps> = (props) => {
             wallet.disconnect();
             return;
         }
-        // console.log("Signature Level = ", base58.encode(signature.slice(0, 58)));
-        console.log("Public Key = ", base58.encode(wallet.account.publicKey));
-        console.log("data.token = ", data.token);
+        console.log("Signature Level = ", signature);
         const {success: signinResult, data: accountData} = await signInAptosWallet(base58.encode(wallet.account.publicKey), signature, data.token);
         console.log("Next Stage: success = ", success, "data = ", data);
         if(!signinResult)  {

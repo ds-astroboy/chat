@@ -716,8 +716,8 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
     private renderPasswordStep = () => {
         return (
             <div>
-                <AptosWalletAdapterProvider plugins={[new PetraWallet(), new FewchaWallet(), new NightlyWallet(), 
-                new RiseWallet(), new TrustWallet(),]}>
+                {/* <AptosWalletAdapterProvider plugins={[new PetraWallet(), new FewchaWallet(), new NightlyWallet(), 
+                new RiseWallet(), new TrustWallet(),]}> */}
                 <WalletSignupButtonGroup getUserInfo={this.getUserInfo} setVerifyResult={this.setVerifyResult}/>
                 <div className='mx_Login_Legacy_badge common-badge bg-light-purple'>
                     Legacy
@@ -742,7 +742,7 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
                     busyLoggingIn={this.state.busyLoggingIn}
                     onTryRegisterClick={this.onTryRegisterClick}
                 />
-                </AptosWalletAdapterProvider>
+                {/* </AptosWalletAdapterProvider> */}
             </div>
         );
     };

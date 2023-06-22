@@ -40,13 +40,6 @@ import AccessibleButton from '../../views/elements/AccessibleButton';
 import WalletSignupButtonGroup from './WalletSignUpButtonGroup';
 import { signInWeb2Email } from '../../../apis';
 
-import { AptosWalletAdapterProvider, useWallet } from "@aptos-labs/wallet-adapter-react";
-import { PetraWallet } from "petra-plugin-wallet-adapter";
-import { FewchaWallet } from "fewcha-plugin-wallet-adapter";
-import { NightlyWallet } from "@nightlylabs/aptos-wallet-adapter-plugin";
-import { RiseWallet } from "@rise-wallet/wallet-adapter";
-import { TrustWallet } from "@trustwallet/aptos-wallet-adapter";
-
 // These are used in several places, and come from the js-sdk's autodiscovery
 // stuff. We define them here so that they'll be picked up by i18n.
 _td("Invalid homeserver discovery response");
@@ -716,8 +709,6 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
     private renderPasswordStep = () => {
         return (
             <div>
-                <AptosWalletAdapterProvider plugins={[new PetraWallet(), new FewchaWallet(), new NightlyWallet(), 
-                new RiseWallet(), new TrustWallet(),]}>
                 <WalletSignupButtonGroup getUserInfo={this.getUserInfo} setVerifyResult={this.setVerifyResult}/>
                 <div className='mx_Login_Legacy_badge common-badge bg-light-purple'>
                     Legacy
@@ -742,7 +733,6 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
                     busyLoggingIn={this.state.busyLoggingIn}
                     onTryRegisterClick={this.onTryRegisterClick}
                 />
-                </AptosWalletAdapterProvider>
             </div>
         );
     };

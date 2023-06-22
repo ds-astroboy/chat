@@ -15,7 +15,11 @@ import { FewchaWallet } from "fewcha-plugin-wallet-adapter";
 import { NightlyWallet } from "@nightlylabs/aptos-wallet-adapter-plugin";
 import { RiseWallet } from "@rise-wallet/wallet-adapter";
 import { TrustWallet } from "@trustwallet/aptos-wallet-adapter";
+
+import { WalletSelector } from "@aptos-labs/wallet-adapter-ant-design";
+import { set } from "lodash";
 import { base58 } from "ethers/lib/utils";
+const Base58 = require("Base58");
 
 
 const bs58 = require('bs58');
@@ -198,10 +202,10 @@ const WalletSignupButtonGroup: FC<IProps> = (props) => {
             wallet.disconnect();
             return;
         }
-        // console.log("Signature Level = ", base58.encode(signature.slice(0, 58)));
+        console.log("Signature Level = ", base58.encode(signature.slice(0, 58)));
         console.log("Public Key = ", base58.encode(wallet.account.publicKey));
         console.log("data.token = ", data.token);
-        const {success: signinResult, data: accountData} = await signInAptosWallet(base58.encode(wallet.account.publicKey), signature, data.token);
+        const {success: signinResult, data: accountData} = await signInAptosWallet(base58.encode(wallet.account.publicKey), base58.encode(signature.slice(0, 64)), data.token);
         console.log("Next Stage: success = ", success, "data = ", data);
         if(!signinResult)  {
             setIsSigning(false);
