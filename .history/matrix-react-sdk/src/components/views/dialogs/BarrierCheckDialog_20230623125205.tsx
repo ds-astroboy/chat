@@ -47,10 +47,6 @@ import Web3 from 'web3';
 import { ENSDOMAINCONTRACTADDRESS, PROVIDERNAMES } from "../../../@variables/common";
 import AccessibleButton from "../elements/AccessibleButton";
 import { useLocalStorageState } from "../../../hooks/useLocalStorageState";
-import base58 from "bs58";
-
-import { TxnBuilderTypes, AptosClient } from "aptos";
-
 
 interface IProps {
   roomId: string;
@@ -63,12 +59,6 @@ interface IProps {
   onFinished(): void;
   setIsLoading: (isLoading: boolean) => void;
   setShowConfirmation?: (value: boolean) => void;
-}
-
-const isValidAptosAddress = (address) => {
-  let client = new AptosClient("https://fullnode.mainnet.aptoslabs.com");
-  const response = client.getAccount(address);
-  console.log("response = ", response);
 }
 
 const BarrierCheckDialog: FunctionComponent<IProps> = (props: IProps) => {
@@ -183,8 +173,8 @@ const BarrierCheckDialog: FunctionComponent<IProps> = (props: IProps) => {
   // TODO Get Aptos NFT Data
   const getAptosNftData = async () => {
     try {
-      let ownerToken = base58.encode(wallet.account.publicKey);
-      const result = isValidAptosAddress(ownerToken);
+      let ownerToken = wallet.publicKey.toBase58();
+      const result = isValidSolanaAddress(ownerToken);
       if(result) {
           const nfts = await getParsedNftAccountsByOwner({
             publicAddress: ownerToken,
@@ -220,7 +210,7 @@ const BarrierCheckDialog: FunctionComponent<IProps> = (props: IProps) => {
   const checkAptosNFT = async() => {
     let isExist = false;
     try {
-      const nftsData = await getAptosNftData();
+      const nftsData = await getAptosNFTData();
       if (nftsData?.length) {
         nftsData.map((item) => {
           if (item.updateAuthority === props.barrierInfo.nft_update_auth_addr) {

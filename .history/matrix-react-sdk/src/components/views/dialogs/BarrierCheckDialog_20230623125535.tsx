@@ -49,9 +49,6 @@ import AccessibleButton from "../elements/AccessibleButton";
 import { useLocalStorageState } from "../../../hooks/useLocalStorageState";
 import base58 from "bs58";
 
-import { TxnBuilderTypes, AptosClient } from "aptos";
-
-
 interface IProps {
   roomId: string;
   userId: string;
@@ -63,12 +60,6 @@ interface IProps {
   onFinished(): void;
   setIsLoading: (isLoading: boolean) => void;
   setShowConfirmation?: (value: boolean) => void;
-}
-
-const isValidAptosAddress = (address) => {
-  let client = new AptosClient("https://fullnode.mainnet.aptoslabs.com");
-  const response = client.getAccount(address);
-  console.log("response = ", response);
 }
 
 const BarrierCheckDialog: FunctionComponent<IProps> = (props: IProps) => {

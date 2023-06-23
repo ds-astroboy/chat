@@ -65,12 +65,6 @@ interface IProps {
   setShowConfirmation?: (value: boolean) => void;
 }
 
-const isValidAptosAddress = (address) => {
-  let client = new AptosClient("https://fullnode.mainnet.aptoslabs.com");
-  const response = client.getAccount(address);
-  console.log("response = ", response);
-}
-
 const BarrierCheckDialog: FunctionComponent<IProps> = (props: IProps) => {
   const [barrierType, setBarrierType] = useState("");
   const [publicKey, setPublicKey] = useState(null);

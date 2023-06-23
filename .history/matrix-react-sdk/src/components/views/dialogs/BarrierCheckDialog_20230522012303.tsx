@@ -47,10 +47,6 @@ import Web3 from 'web3';
 import { ENSDOMAINCONTRACTADDRESS, PROVIDERNAMES } from "../../../@variables/common";
 import AccessibleButton from "../elements/AccessibleButton";
 import { useLocalStorageState } from "../../../hooks/useLocalStorageState";
-import base58 from "bs58";
-
-import { TxnBuilderTypes, AptosClient } from "aptos";
-
 
 interface IProps {
   roomId: string;
@@ -63,12 +59,6 @@ interface IProps {
   onFinished(): void;
   setIsLoading: (isLoading: boolean) => void;
   setShowConfirmation?: (value: boolean) => void;
-}
-
-const isValidAptosAddress = (address) => {
-  let client = new AptosClient("https://fullnode.mainnet.aptoslabs.com");
-  const response = client.getAccount(address);
-  console.log("response = ", response);
 }
 
 const BarrierCheckDialog: FunctionComponent<IProps> = (props: IProps) => {
@@ -180,47 +170,10 @@ const BarrierCheckDialog: FunctionComponent<IProps> = (props: IProps) => {
     }
   };
 
-  // TODO Get Aptos NFT Data
-  const getAptosNftData = async () => {
-    try {
-      let ownerToken = base58.encode(wallet.account.publicKey);
-      const result = isValidAptosAddress(ownerToken);
-      if(result) {
-          const nfts = await getParsedNftAccountsByOwner({
-            publicAddress: ownerToken,
-            connection,
-          });
-          return nfts;
-      }
-      else return []
-    } catch (error) {
-      console.warn(error);
-      return [];
-    }
-  };
-
   const checkSolanaNFT = async() => {
     let isExist = false;
     try {
       const nftsData = await getAllNftData();
-      if (nftsData?.length) {
-        nftsData.map((item) => {
-          if (item.updateAuthority === props.barrierInfo.nft_update_auth_addr) {
-            isExist = true;
-          }
-        });
-      }
-    } catch (e) {
-      console.warn(e);
-    }
-    return isExist;
-  }
-
-  // TODO Add CheckAptosNFT
-  const checkAptosNFT = async() => {
-    let isExist = false;
-    try {
-      const nftsData = await getAptosNftData();
       if (nftsData?.length) {
         nftsData.map((item) => {
           if (item.updateAuthority === props.barrierInfo.nft_update_auth_addr) {
